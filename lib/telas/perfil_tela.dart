@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'editar_perfil_tela.dart';
 
-class PerfilTela extends StatelessWidget {
+class PerfilTela extends StatefulWidget {
   const PerfilTela({super.key});
+
+  @override
+  State<PerfilTela> createState() => _PerfilTelaState();
+}
+
+class _PerfilTelaState extends State<PerfilTela> {
+  String nome = 'Estudante';
+  String email = 'estudante@email.com';
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +31,10 @@ class PerfilTela extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        const Center(
+        Center(
           child: Text(
-            'Estudante',
-            style: TextStyle(
+            nome,
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
@@ -35,10 +43,12 @@ class PerfilTela extends StatelessWidget {
 
         const SizedBox(height: 8),
 
-        const Center(
+        Center(
           child: Text(
-            'estudante@email.com',
-            style: TextStyle(fontSize: 16),
+            email,
+            style: const TextStyle(
+              fontSize: 16,
+            ),
           ),
         ),
 
@@ -71,13 +81,23 @@ class PerfilTela extends StatelessWidget {
         const SizedBox(height: 20),
 
         ElevatedButton.icon(
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async {
+            final resultado = await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const EditarPerfilTela(),
+                builder: (context) => EditarPerfilTela(
+                  nomeAtual: nome,
+                  emailAtual: email,
+                ),
               ),
             );
+
+            if (resultado != null) {
+              setState(() {
+                nome = resultado['nome'];
+                email = resultado['email'];
+              });
+            }
           },
           icon: const Icon(Icons.edit),
           label: const Text('Editar perfil'),

@@ -1,20 +1,42 @@
 import 'package:flutter/material.dart';
 
 class EditarPerfilTela extends StatefulWidget {
-  const EditarPerfilTela({super.key});
+  final String nomeAtual;
+  final String emailAtual;
+
+  const EditarPerfilTela({
+    super.key,
+    required this.nomeAtual,
+    required this.emailAtual,
+  });
 
   @override
   State<EditarPerfilTela> createState() => _EditarPerfilTelaState();
 }
 
 class _EditarPerfilTelaState extends State<EditarPerfilTela> {
-  final nomeController = TextEditingController(
-    text: 'Estudante',
-  );
+  late TextEditingController nomeController;
+  late TextEditingController emailController;
 
-  final emailController = TextEditingController(
-    text: 'estudante@email.com',
-  );
+  @override
+  void initState() {
+    super.initState();
+
+    nomeController = TextEditingController(
+      text: widget.nomeAtual,
+    );
+
+    emailController = TextEditingController(
+      text: widget.emailAtual,
+    );
+  }
+
+  @override
+  void dispose() {
+    nomeController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +62,7 @@ class _EditarPerfilTelaState extends State<EditarPerfilTela> {
 
             TextField(
               controller: emailController,
+              keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: 'E-mail',
                 border: OutlineInputBorder(),
@@ -53,15 +76,12 @@ class _EditarPerfilTelaState extends State<EditarPerfilTela> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  String nome = nomeController.text;
-                  String email = emailController.text;
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Perfil de $nome salvo!',
-                      ),
-                    ),
+                  Navigator.pop(
+                    context,
+                    {
+                      'nome': nomeController.text,
+                      'email': emailController.text,
+                    },
                   );
                 },
                 child: const Text('Salvar alterações'),

@@ -18,7 +18,7 @@ class InicioTela extends StatelessWidget {
 
         const SizedBox(height: 20),
 
-        // Seção 1: Curso em andamento
+        
         const Text(
           'Curso em andamento',
           style: TextStyle(
@@ -78,7 +78,7 @@ class InicioTela extends StatelessWidget {
 
         const SizedBox(height: 24),
 
-        // Seção 2: Cursos disponíveis
+        
         const Text(
           'Cursos disponíveis',
           style: TextStyle(
@@ -107,7 +107,7 @@ class InicioTela extends StatelessWidget {
 
         const SizedBox(height: 24),
 
-        // Seção 3: Resumo do estudante
+        
         const Text(
           'Resumo do estudante',
           style: TextStyle(
