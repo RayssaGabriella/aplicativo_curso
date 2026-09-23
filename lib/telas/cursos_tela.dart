@@ -1,96 +1,80 @@
 import 'package:flutter/material.dart';
+import '../dados/cursos_dados.dart' as dados;
+import '../widgets/curso_card.dart';
 
-class CursosTela extends StatelessWidget {
+class CursosTela extends StatefulWidget {
   const CursosTela({super.key});
 
   @override
+  State<CursosTela> createState() => _CursosTelaState();
+}
+
+class _CursosTelaState extends State<CursosTela> {
+  final TextEditingController pesquisaController =
+      TextEditingController();
+
+  String pesquisa = '';
+
+  @override
   Widget build(BuildContext context) {
-    final cursos = const [
-      {
-        'nome': 'Flutter Básico',
-        'descricao':
-            'Curso introdutório sobre desenvolvimento mobile utilizando Flutter.',
-        'aulas': '12 aulas',
-        'icone': Icons.flutter_dash,
-      },
-      {
-        'nome': 'Dart Essencial',
-        'descricao':
-            'Aprenda os principais conceitos da linguagem Dart.',
-        'aulas': '10 aulas',
-        'icone': Icons.code,
-      },
-      {
-        'nome': 'Interface Mobile',
-        'descricao':
-            'Aprenda a criar interfaces bonitas e organizadas para aplicativos.',
-        'aulas': '15 aulas',
-        'icone': Icons.phone_android,
-      },
-    ];
+    final cursosFiltrados = dados.cursos.where((curso) {
+      return curso['nome']
+          .toString()
+          .toLowerCase()
+          .contains(pesquisa.toLowerCase());
+    }).toList();
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(12),
-      itemCount: cursos.length,
-      itemBuilder: (context, indice) {
-        final curso = cursos[indice];
-
-        return Card(
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(12),
-
-            leading: CircleAvatar(
-              backgroundColor: Colors.deepPurple,
-              child: Icon(
-                curso['icone'] as IconData,
-                color: Colors.white,
-              ),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: TextField(
+            controller: pesquisaController,
+            decoration: const InputDecoration(
+              labelText: 'Pesquisar curso',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(),
             ),
-
-            title: Text(
-              curso['nome'] as String,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            subtitle: Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    curso['descricao'] as String,
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  Text(
-                    curso['aulas'] as String,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  const Text(
-                    'Continuar curso',
-                    style: TextStyle(
-                      color: Colors.deepPurple,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            trailing: const Icon(
-              Icons.chevron_right,
-            ),
+            onChanged: (valor) {
+              setState(() {
+                pesquisa = valor;
+              });
+            },
           ),
-        );
-      },
+        ),
+
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: cursosFiltrados.length,
+            itemBuilder: (context, index) {
+              final curso = cursosFiltrados[index];
+
+              final nomeCurso = curso['nome'];
+              final estaFavorito =
+                  dados.favoritos.contains(nomeCurso);
+
+              return CursoCard(
+                nome: curso['nome'],
+                descricao: curso['descricao'],
+                aulas: curso['aulas'],
+                icone: curso['icone'],
+                favorito: estaFavorito,
+
+                onFavoritar: () {
+                  setState(() {
+                    if (estaFavorito) {
+                      dados.favoritos.remove(nomeCurso);
+                    } else {
+                      dados.favoritos.add(nomeCurso);
+                    }
+                  });
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
